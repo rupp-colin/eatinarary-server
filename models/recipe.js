@@ -8,7 +8,8 @@ const recipeSchema = new mongoose.Schema({
   url: String,
   healthLabels: String,
   ingredientLines: Array,
-  instructions: String
+  instructions: String,
+  userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
 });
 
 //adds 'createdAt' and 'updatedAt' fields
