@@ -4,18 +4,31 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const fetch = require('node-fetch');
+const passport = require('passport');
 
 const { PORT, CLIENT_ORIGIN, APP_KEY, APP_ID } = require('./config');
 const { dbConnect } = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
 
+const usersRouter = require('./routes/users.js');
+const jwtStrategy = require('./passport/jwt.js');
+
+//creates an Express app
 const app = express();
 
+//uses morgan logging library
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
     skip: (req, res) => process.env.NODE_ENV === 'test'
   })
 );
+
+//Configure passport to utilize user authentication strategy
+const localStrategy = require('./passport/local.js');
+passport.use(localStrategy);
+
+//Configure passport to use JWT authentication strategy
+passport.use(jwtStrategy);
 
 app.use(
   cors({
@@ -23,6 +36,9 @@ app.use(
   })
 );
 
+
+// ========================= MAKE REQUEST TO 3RD PARTY API ============================= //
+//
 //gets APP_ID and APP_KEY from .env to gain access to edamam
 const edamamParams = {
   app_id: APP_ID,
@@ -50,8 +66,6 @@ app.get('/search', (req, res, next) => {
     .catch(err => console.log(err));
 });
 
-
-
 function runServer(port = PORT) {
   const server = app
     .listen(port, () => {
@@ -63,6 +77,26 @@ function runServer(port = PORT) {
     });
 }
 
+// ============================ Custon Error Handlers =========================== //
+
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  if(err.status) {
+    const errBody = Object.assign({}, err, { message: err.message });
+    res.status(err.status).json(errBody);
+  } else {
+    console.loerror(err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// ========================= Connect to DB and listen for incoming connections =================== //
+//
 if (require.main === module) {
   dbConnect();
   runServer();

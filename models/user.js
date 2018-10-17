@@ -11,7 +11,7 @@ userSchema.methods.validatePassword = function (password) {
 };
 
 userSchema.statics.hashPassword = password => {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hash(password, 11);
 };
 
 userSchema.set('toObject', {
