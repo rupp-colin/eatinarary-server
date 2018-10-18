@@ -44,7 +44,7 @@ app.use(
 );
 
 // ========================= Mount Routers ==================================== //
-app.use('/login', authRouter);
+app.use('/auth', authRouter);
 app.use('/register', usersRouter);
 app.use('/recipebook', recipeRouter);
 

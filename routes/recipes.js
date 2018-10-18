@@ -23,7 +23,7 @@ router.get('/', (req, res, next) => {
 
 // ================== POST/CREATE RECIPE ================= //
 router.post('/', (req, res, next) => {
-  const {label, uri, image, source, url, healthLabels, ingredientLines, instructions} = req.body;
+  const {label, uri, image, source, url, healthLabels, ingredientLines, instructions, source} = req.body;
   const userId = req.user.id;
 
   if(!label) {
