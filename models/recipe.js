@@ -6,7 +6,7 @@ const recipeSchema = new mongoose.Schema({
   image: String,
   source: String,
   url: String,
-  healthLabels: String,
+  healthLabels: Array,
   ingredientLines: Array,
   instructions: String,
   userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
@@ -22,3 +22,6 @@ recipeSchema.set('toObject', {
     delete ret.__v;
   }
 });
+
+
+module.exports = mongoose.model('Recipe', recipeSchema);

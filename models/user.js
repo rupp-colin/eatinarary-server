@@ -1,4 +1,4 @@
-const mogoose = require('mongoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
@@ -17,7 +17,7 @@ userSchema.statics.hashPassword = password => {
 userSchema.set('toObject', {
   virtuals: true,
   versionKey: false,
-  transform; (doc, result) => {
+  transform: (doc, result) => {
     delete result._id;
     delete result.__v;
     delete result.password;
