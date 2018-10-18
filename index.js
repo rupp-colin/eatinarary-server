@@ -11,11 +11,15 @@ const { dbConnect } = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
 
 const usersRouter = require('./routes/users.js');
+const authRouter = require('./routes/auth.js');
+const recipeRouter = require('./routes/recipes.js');
 const jwtStrategy = require('./passport/jwt.js');
 
 //creates an Express app
 const app = express();
 
+
+// =============================== Middleware stuffs ======================= //
 //uses morgan logging library
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
@@ -30,11 +34,19 @@ passport.use(localStrategy);
 //Configure passport to use JWT authentication strategy
 passport.use(jwtStrategy);
 
+// parse request body
+app.use(express.json());
+
 app.use(
   cors({
     origin: CLIENT_ORIGIN
   })
 );
+
+// ========================= Mount Routers ==================================== //
+app.use('/login', authRouter);
+app.use('/register', usersRouter);
+app.use('/recipebook', recipeRouter);
 
 
 // ========================= MAKE REQUEST TO 3RD PARTY API ============================= //
@@ -90,7 +102,7 @@ app.use((err, req, res, next) => {
     const errBody = Object.assign({}, err, { message: err.message });
     res.status(err.status).json(errBody);
   } else {
-    console.loerror(err);
+    console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
