@@ -9,7 +9,6 @@ const recipeSchema = new mongoose.Schema({
   healthLabels: Array,
   ingredientLines: Array,
   instructions: String,
-  source: String,
   userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
 });
 
