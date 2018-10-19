@@ -5,7 +5,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const fetch = require('node-fetch');
 const passport = require('passport');
-
+const bodyParser = require('body-parser');
 const { PORT, CLIENT_ORIGIN, APP_KEY, APP_ID } = require('./config');
 const { dbConnect } = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
@@ -35,7 +35,7 @@ passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 // parse request body
-app.use(express.json());
+app.use(bodyParser.json());
 
 app.use(
   cors({

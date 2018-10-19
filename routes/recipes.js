@@ -25,7 +25,6 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
   const {label, uri, image, source, url, healthLabels, ingredientLines, instructions} = req.body;
   const userId = req.user.id;
-
   if(!label) {
     const err = new Error('Missing recipe label in request body');
     err.status = 400;
@@ -45,3 +44,20 @@ router.post('/', (req, res, next) => {
 });
 
 module.exports = router;
+
+// ====================== DELETE RECIPE =================== //
+router.delete('/', (req, res, next) => {
+  const id = req.body.id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    const err = new Error('The `id` is not valid');
+    err.status = 400;
+    return next(err);
+  }
+  Recipe
+    .findByIdAndRemove(id)
+    .then(() => {
+      res.sendStatus(204).end();
+    })
+    .catch(err => next(err));
+});
