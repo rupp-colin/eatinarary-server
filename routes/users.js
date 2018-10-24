@@ -8,7 +8,6 @@ const router = express.Router();
 // ===================== POST creates a new user ====================== //
 
 router.post('/', (req, res, next) => {
-console.log(req.body)
   const { username } = req.body;
   const { password } = req.body;
 
