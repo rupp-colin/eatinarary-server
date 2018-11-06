@@ -51,7 +51,19 @@ router.post('/', (req, res, next) => {
   }
   //end validation checks
 
-  User.hashPassword(password)
+  return User.find({username})
+    .count()
+    .then(count => {
+      if(count > 0) {
+        return Promise.reject({
+          code:422,
+          reason:'ValidationError',
+          message: 'Username already taken',
+          location: 'username'
+        });
+      }
+      return User.hashPassword(password);
+    })
     .then(digest => {
       const newUser = {
         username,
@@ -63,9 +75,8 @@ router.post('/', (req, res, next) => {
       return res.status(201).json(user);
     })
     .catch(err => {
-      if (err.code === 11000) {
-        err = new Error('username already exists');
-        err.status = 400;
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
       }
       next(err);
     });
